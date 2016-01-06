@@ -1,5 +1,4 @@
 #vagfr-rest-wrapper
-[TOC]
 
 Project description
 ----------------------
@@ -14,10 +13,10 @@ I started this project for an IoT Application with the ESP8266. The repository c
 Run the application
 -------------
 
-    ./gradlew bootRun
-
-Test URL for your Browser:
-http://localhost:8080/connection?from=6906508&to=6930811&product=T
+```
+./gradlew bootRun
+```
+Test URL for your Browser: http://localhost:8080/connection?from=6906508&to=6930811&product=T
 
 ----------
 
@@ -28,11 +27,12 @@ REST Endpoint description
 ### GET:  /station/suggest
  With this endpoint you can get the station ids which you need to use later.  
  
- **Parameter: **
+**Parameter:**
  
  1. q -- Name of station you want to search
 
-Example: station/suggest?q=Technisches+Rathaus
+**Example:** 
+/station/suggest?q=Technisches+Rathaus
 
 
 ----------
@@ -42,7 +42,7 @@ Example: station/suggest?q=Technisches+Rathaus
 Lists all trips from one station to another with departure time and line number. 
 **Please note that only direct connections will be listed**
 
- **Parameter: **
+ **Parameter:**
  
  1. from -- Station id from departure station
  2. to -- Station id from the arrival station
@@ -50,7 +50,7 @@ Lists all trips from one station to another with departure time and line number.
  4. (optional) timeOffset -- Minutes e.g. you need to walk to the station. 
  
 **Example:** 
-connection?from=6906508&to=6930811&product=T
+/connection?from=6906508&to=6930811&product=T
 
 ----------
 
@@ -58,7 +58,7 @@ connection?from=6906508&to=6930811&product=T
 Get next departure time for your trip. Lightwight for easy processing with the ESP8266  
 **Please note that only direct connections will be listed**
 
- **Parameter: **
+ **Parameter:**
  
  1. from -- Station id from departure station
  2. to -- Station id from the arrival station
@@ -66,14 +66,14 @@ Get next departure time for your trip. Lightwight for easy processing with the E
  4. (optional) timeOffset -- Minutes e.g. you need to walk to the station. 
  
 **Example:** 
-connectionEsp?from=6906508&to=6930811&product=T&timeOffset=5
+/connectionEsp?from=6906508&to=6930811&product=T&timeOffset=5
 
 ----------
 
 ###GET: /connectionRaw
 Lists all trips from one station to another with with all data the public-transport-enabler libary delivers.
 
- **Parameter: **
+ **Parameter:**
  
  1. from -- Station id from departure station
  2. to -- Station id from the arrival station
@@ -81,6 +81,6 @@ Lists all trips from one station to another with with all data the public-transp
  4. (optional) timeOffset -- Minutes e.g. you need to walk to the station. 
  
 **Example:** 
-connectionRaw?from=6906508&to=6930811&product=T
+/connectionRaw?from=6906508&to=6930811&product=T
 
 
