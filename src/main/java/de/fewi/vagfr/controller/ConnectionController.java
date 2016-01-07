@@ -65,11 +65,11 @@ public class ConnectionController {
                 if(retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
-                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\"" + retryList.get(0).getDepartureTime() + "\"}}]}");
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ retryList.get(0).getDepartureTime() +"\",\"departureTimestamp\":"+ retryList.get(0).getDepartureTimestamp() +",\"prognosis\":{\"departure\":null}}}]}");
             }
 
             else
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\"" + list.get(0).getDepartureTime() + "\"}}]}");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ list.get(0).getDepartureTime() +"\",\"departureTimestamp\":"+ list.get(0).getDepartureTimestamp() +",\"prognosis\":{\"departure\":null}}}]}");
 
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: "+efaData.status.name());
@@ -102,6 +102,7 @@ public class ConnectionController {
                     data.product = leg.line.product.toString();
                     data.number = leg.line.label;
                     data.departureTime =  df.format(leg.getDepartureTime());
+                    data.departureTimestamp = leg.getDepartureTime().getTime();
                     list.add(data);
                 }
 

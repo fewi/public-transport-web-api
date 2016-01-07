@@ -14,6 +14,16 @@ public class TripData implements Serializable {
 
     public String departureTime;
 
+    public long departureTimestamp;
+
+    public long getDepartureTimestamp() {
+        return departureTimestamp;
+    }
+
+    public void setDepartureTimestamp(long departureTimestamp) {
+        this.departureTimestamp = departureTimestamp;
+    }
+
     public String getFrom() {
         return from;
     }
