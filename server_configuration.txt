@@ -1,0 +1,53 @@
+su -c 'yum update'
+
+timedatectl set-timezone Europe/Berlin
+
+cd ~
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.rpm"
+
+yum localinstall jdk-8u60-linux-x64.rpm
+
+rm ~/jdk-8u60-linux-x64.rpm
+
+sh -c "echo export JAVA_HOME=/usr/java/jdk1.8.0_60/ >> /etc/environment"
+
+yum install git nano
+
+adduser username
+
+passwd username
+
+nano /etc/ssh/sshd_config
+PermitRootLogin no
+
+git clone https://github.com/fewi/vagfr-rest-wrapper.git
+
+cd vagfr-rest-wrapper
+
+git submodule init
+
+git submodule update
+
+chmod +x gradlew
+
+./gradlew bootRepackage
+
+nano /etc/systemd/system/vagfr.service
+
+[Unit]
+Description=Vagfr Spring Boot
+After=syslog.target
+
+[Service]
+User=username
+ExecStart=/home/username/vagfr-rest-wrapper/build/libs/vagfr-rest-wrapper-0.0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+
+
+chmod 664 /etc/systemd/system/vagfr.service
+
+systemctl enable vagfr.service
+
