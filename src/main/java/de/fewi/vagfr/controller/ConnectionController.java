@@ -27,7 +27,7 @@ public class ConnectionController {
 
     @RequestMapping(value = "/connection", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException
+    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException
     {
         plannedDepartureTime.setTime(new Date().getTime() + timeOffset*60*1000);
         char[] products ={ product };
@@ -52,7 +52,7 @@ public class ConnectionController {
 
     @RequestMapping(value = "/connectionEsp", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> departureEsp(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException
+    public ResponseEntity departureEsp(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException
     {
         plannedDepartureTime.setTime(new Date().getTime() + timeOffset*60*1000);
         char[] products ={ product };
@@ -65,11 +65,11 @@ public class ConnectionController {
                 if(retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
-                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ retryList.get(0).getDepartureTime() +"\",\"departureTimestamp\":"+ retryList.get(0).getDepartureTimestamp() +",\"prognosis\":{\"departure\":null}}}]}");
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ retryList.get(0).getPlannedDepartureTime() +"\",\"departureTimestamp\":"+ retryList.get(0).getPlannedDepartureTimestamp() +",\"prognosis\":{\"departure\":"+retryList.get(0).getDepartureTimestamp()+"}}}]}");
             }
 
             else
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ list.get(0).getDepartureTime() +"\",\"departureTimestamp\":"+ list.get(0).getDepartureTimestamp() +",\"prognosis\":{\"departure\":null}}}]}");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ list.get(0).getPlannedDepartureTime() +"\",\"departureTimestamp\":"+ list.get(0).getPlannedDepartureTimestamp() +",\"prognosis\":{\"departure\":"+list.get(0).getDepartureTimestamp()+"}}}]}");
 
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: "+efaData.status.name());
@@ -95,14 +95,23 @@ public class ConnectionController {
                 Date departureTime =leg.getDepartureTime();
                 if(departureTime.after(plannedDepartureTime) && leg.departure.id.equals(from) && leg.arrival.id.equals(to)){
                     TripData data = new TripData();
-                    data.from = trip.from.name;
-                    data.fromId = trip.from.id;
-                    data.to = trip.to.name;
-                    data.toId = trip.to.id;
-                    data.product = leg.line.product.toString();
-                    data.number = leg.line.label;
-                    data.departureTime =  df.format(leg.getDepartureTime());
-                    data.departureTimestamp = leg.getDepartureTime().getTime();
+                    data.setFrom(trip.from.name);
+                    data.setFromId(trip.from.id);
+                    data.setTo(trip.to.name);
+                    data.setToId(trip.to.id);
+                    data.setProduct(leg.line.product.toString());
+                    data.setNumber(leg.line.label);
+
+                    //Planned time
+                    data.setPlannedDepartureTime(df.format(leg.departureStop.plannedDepartureTime));
+                    data.setPlannedDepartureTimestamp(leg.departureStop.plannedDepartureTime.getTime());
+
+                    //Predicted time
+                    data.setDepartureTime(df.format((leg.departureStop.predictedDepartureTime)));
+                    data.setDepartureTimestamp(leg.departureStop.predictedDepartureTime.getTime());
+
+                    data.setDepartureDelay(leg.departureStop.getDepartureDelay()/1000);
+
                     list.add(data);
                 }
 

@@ -3,18 +3,22 @@ package de.fewi.vagfr.entity;
 import java.io.Serializable;
 
 public class TripData implements Serializable {
-    public String from;
-    public String fromId;
+    private String from;
+    private String fromId;
 
-    public String to;
-    public String toId;
+    private String to;
+    private String toId;
 
-    public String product;
-    public String number;
+    private String product;
+    private String number;
 
-    public String departureTime;
+    private String departureTime;
+    private String plannedDepartureTime;
 
-    public long departureTimestamp;
+    private long departureTimestamp;
+    private long plannedDepartureTimestamp;
+
+    private long departureDelay;
 
     public long getDepartureTimestamp() {
         return departureTimestamp;
@@ -78,5 +82,29 @@ public class TripData implements Serializable {
 
     public void setDepartureTime(String departureTime) {
         this.departureTime = departureTime;
+    }
+
+    public String getPlannedDepartureTime() {
+        return plannedDepartureTime;
+    }
+
+    public void setPlannedDepartureTime(String plannedDepartureTime) {
+        this.plannedDepartureTime = plannedDepartureTime;
+    }
+
+    public long getPlannedDepartureTimestamp() {
+        return plannedDepartureTimestamp;
+    }
+
+    public void setPlannedDepartureTimestamp(long plannedDepartureTimestamp) {
+        this.plannedDepartureTimestamp = plannedDepartureTimestamp;
+    }
+
+    public long getDepartureDelay() {
+        return departureDelay;
+    }
+
+    public void setDepartureDelay(long departureDelay) {
+        this.departureDelay = departureDelay;
     }
 }
