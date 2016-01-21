@@ -65,11 +65,11 @@ public class ConnectionController {
                 if(retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
-                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ retryList.get(0).getPlannedDepartureTime() +"\",\"departureTimestamp\":"+ retryList.get(0).getPlannedDepartureTimestamp() +",\"prognosis\":{\"departure\":"+retryList.get(0).getDepartureTimestamp()+"}}}]}");
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ retryList.get(0).getPlannedDepartureTime() +"\",\"plannedDepartureTimestamp\":"+ retryList.get(0).getPlannedDepartureTimestamp() +",\"departureTimestamp\":"+retryList.get(0).getDepartureTimestamp()+"}}]}");
             }
 
             else
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ list.get(0).getPlannedDepartureTime() +"\",\"departureTimestamp\":"+ list.get(0).getPlannedDepartureTimestamp() +",\"prognosis\":{\"departure\":"+list.get(0).getDepartureTimestamp()+"}}}]}");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departure\":\""+ list.get(0).getPlannedDepartureTime() +"\",\"plannedDepartureTimestamp\":"+ list.get(0).getPlannedDepartureTimestamp() +",\"departureTimestamp\":"+list.get(0).getDepartureTimestamp()+"}}]}");
 
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: "+efaData.status.name());
@@ -93,7 +93,7 @@ public class ConnectionController {
 
             if(leg != null){
                 Date departureTime =leg.getDepartureTime();
-                if(departureTime.after(plannedDepartureTime) && leg.departure.id.equals(from) && leg.arrival.id.equals(to)){
+                if(departureTime.after(plannedDepartureTime) && leg.departure.id.equals(from) && leg.arrival.id.equals(to) && !leg.departureStop.departureCancelled){
                     TripData data = new TripData();
                     data.setFrom(trip.from.name);
                     data.setFromId(trip.from.id);
