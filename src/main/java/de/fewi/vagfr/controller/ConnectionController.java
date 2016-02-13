@@ -62,9 +62,9 @@ public class ConnectionController {
                 if (retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
-                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + retryList.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + retryList.get(0).getPlannedDepartureTimestamp() + "}}]}");
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + retryList.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + retryList.get(0).getPlannedDepartureTimestamp() + ",\"delay\":"+ retryList.get(0).getDepartureDelay()/60 + ",\"to\": \""+ retryList.get(0).getTo() + "\" }}]}");
             } else
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + list.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + list.get(0).getPlannedDepartureTimestamp() + "}}]}");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + list.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + list.get(0).getPlannedDepartureTimestamp() + ",\"delay\":"+ list.get(0).getDepartureDelay()/60 + ",\"to\": \""+ list.get(0).getTo() + "\" }}]}");
 
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
