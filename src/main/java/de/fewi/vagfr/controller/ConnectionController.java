@@ -28,7 +28,7 @@ public class ConnectionController {
 
     @RequestMapping(value = "/connection", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+    public ResponseEntity connection(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
         plannedDepartureTime.setTime(new Date().getTime() + timeOffset * 60 * 1000);
         char[] products = {product};
         QueryTripsResult efaData = provider.queryTrips(new Location(LocationType.STATION, from), null, new Location(LocationType.STATION, to), plannedDepartureTime, true, Product.fromCodes(products), null, null, null, null);
@@ -47,6 +47,19 @@ public class ConnectionController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
     }
+
+    @RequestMapping(value = "/departure", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+        QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
+        if (efaData.status.name().equals("OK")) {
+            List<TripData> list = convertDepartures(efaData.findStationDepartures(from));
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
+    }
+
+
 
     @RequestMapping(value = "/connectionEsp", method = RequestMethod.GET)
     @ResponseBody
@@ -120,6 +133,28 @@ public class ConnectionController {
 
             }
 
+        }
+        return list;
+    }
+
+    private List<TripData> convertDepartures(StationDepartures stationDepartures) {
+       List<TripData> list = new ArrayList();
+        for (Departure departure : stationDepartures.departures) {
+               TripData data = new TripData();
+                    data.setTo(departure.destination.name);
+                    data.setToId(departure.destination.id);
+                    data.setProduct(departure.line.product.toString());
+                    data.setNumber(departure.line.label);
+                    data.setPosition(departure.position.name);
+                    //Planned time
+                    data.setPlannedDepartureTime(df.format(departure.plannedTime));
+                    data.setPlannedDepartureTimestamp(departure.plannedTime.getTime());
+                    //Predicted time
+                    if(departure.predictedTime != null) {
+                        data.setDepartureTime(df.format((departure.predictedTime)));
+                        data.setDepartureTimestamp(departure.predictedTime.getTime());
+                    }
+                    list.add(data);
         }
         return list;
     }
