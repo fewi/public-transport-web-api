@@ -19,7 +19,6 @@ public class TripData implements Serializable {
     private long plannedDepartureTimestamp;
 
     private long departureDelay;
-    private String position;
 
     public long getDepartureTimestamp() {
         return departureTimestamp;
@@ -109,11 +108,4 @@ public class TripData implements Serializable {
         this.departureDelay = departureDelay;
     }
 
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getPosition() {
-        return position;
-    }
 }
