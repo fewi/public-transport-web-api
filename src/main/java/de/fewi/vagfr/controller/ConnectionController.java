@@ -1,5 +1,6 @@
 package de.fewi.vagfr.controller;
 
+import de.fewi.vagfr.entity.DepartureData;
 import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.*;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class ConnectionController {
     public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
         QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
         if (efaData.status.name().equals("OK")) {
-            List<TripData> list = convertDepartures(efaData.findStationDepartures(from));
+            List<DepartureData> list = convertDepartures(efaData.findStationDepartures(from));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
@@ -137,23 +138,26 @@ public class ConnectionController {
         return list;
     }
 
-    private List<TripData> convertDepartures(StationDepartures stationDepartures) {
-       List<TripData> list = new ArrayList();
+    private List<DepartureData> convertDepartures(StationDepartures stationDepartures) {
+       List<DepartureData> list = new ArrayList();
         for (Departure departure : stationDepartures.departures) {
-               TripData data = new TripData();
+            DepartureData data = new DepartureData();
                     data.setTo(departure.destination.name);
                     data.setToId(departure.destination.id);
                     data.setProduct(departure.line.product.toString());
                     data.setNumber(departure.line.label);
-                    data.setPosition(departure.position.name);
-                    //Planned time
-                    data.setPlannedDepartureTime(df.format(departure.plannedTime));
-                    data.setPlannedDepartureTimestamp(departure.plannedTime.getTime());
+                    if(departure.position != null)
+                        data.setPlatform(departure.position.name);
                     //Predicted time
-                    if(departure.predictedTime != null) {
-                        data.setDepartureTime(df.format((departure.predictedTime)));
+                    if(departure.predictedTime != departure.plannedTime && departure.predictedTime != null) {
+                        data.setDepartureTime(df.format(departure.predictedTime));
                         data.setDepartureTimestamp(departure.predictedTime.getTime());
+                        data.setDepartureDelay((departure.predictedTime.getTime() - departure.plannedTime.getTime())/1000);
+                    } else {
+                        data.setDepartureTime(df.format(departure.plannedTime));
+                        data.setDepartureTimestamp(departure.plannedTime.getTime());
                     }
+
                     list.add(data);
         }
         return list;
