@@ -13,7 +13,9 @@ Checkout from GitHub
 Don't forget to init and update git submodules for the public-transport-enabler library.
 
 cd vagfr-rest-wrapper
+
 git submodule init
+
 git submodule update
 
 Run the application
