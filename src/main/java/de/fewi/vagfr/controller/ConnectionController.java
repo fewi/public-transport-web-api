@@ -1,8 +1,13 @@
 package de.fewi.vagfr.controller;
 
-import de.fewi.vagfr.entity.DepartureData;
+import de.fewi.vagfr.entity.TripData;
 import de.schildbach.pte.VagfrProvider;
-import de.schildbach.pte.dto.*;
+import de.schildbach.pte.dto.Location;
+import de.schildbach.pte.dto.LocationType;
+import de.schildbach.pte.dto.Product;
+import de.schildbach.pte.dto.QueryTripsContext;
+import de.schildbach.pte.dto.QueryTripsResult;
+import de.schildbach.pte.dto.Trip;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import de.fewi.vagfr.entity.TripData;
 
 @Controller
 public class ConnectionController {
@@ -49,18 +52,6 @@ public class ConnectionController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
     }
 
-    @RequestMapping(value = "/departure", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
-        QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
-        if (efaData.status.name().equals("OK")) {
-            List<DepartureData> list = convertDepartures(efaData.findStationDepartures(from));
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
-    }
-
-
 
     @RequestMapping(value = "/connectionEsp", method = RequestMethod.GET)
     @ResponseBody
@@ -76,9 +67,9 @@ public class ConnectionController {
                 if (retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
-                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + retryList.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + retryList.get(0).getPlannedDepartureTimestamp() + ",\"delay\":"+ retryList.get(0).getDepartureDelay()/60 + ",\"to\": \""+ retryList.get(0).getTo() + "\" }}]}");
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + retryList.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + retryList.get(0).getPlannedDepartureTimestamp() + ",\"delay\":" + retryList.get(0).getDepartureDelay() / 60 + ",\"to\": \"" + retryList.get(0).getTo() + "\" }}]}");
             } else
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + list.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + list.get(0).getPlannedDepartureTimestamp() + ",\"delay\":"+ list.get(0).getDepartureDelay()/60 + ",\"to\": \""+ list.get(0).getTo() + "\" }}]}");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"connections\":[{\"from\":{\"departureTime\":\"" + list.get(0).getDepartureTime() + "\",\"plannedDepartureTimestamp\":" + list.get(0).getPlannedDepartureTimestamp() + ",\"delay\":" + list.get(0).getDepartureDelay() / 60 + ",\"to\": \"" + list.get(0).getTo() + "\" }}]}");
 
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
@@ -134,31 +125,6 @@ public class ConnectionController {
 
             }
 
-        }
-        return list;
-    }
-
-    private List<DepartureData> convertDepartures(StationDepartures stationDepartures) {
-       List<DepartureData> list = new ArrayList();
-        for (Departure departure : stationDepartures.departures) {
-            DepartureData data = new DepartureData();
-                    data.setTo(departure.destination.name);
-                    data.setToId(departure.destination.id);
-                    data.setProduct(departure.line.product.toString());
-                    data.setNumber(departure.line.label);
-                    if(departure.position != null)
-                        data.setPlatform(departure.position.name);
-                    //Predicted time
-                    if(departure.predictedTime != null && departure.predictedTime.after(departure.plannedTime)) {
-                        data.setDepartureTime(df.format(departure.predictedTime));
-                        data.setDepartureTimestamp(departure.predictedTime.getTime());
-                        data.setDepartureDelay((departure.predictedTime.getTime() - departure.plannedTime.getTime())/1000);
-                    } else {
-                        data.setDepartureTime(df.format(departure.plannedTime));
-                        data.setDepartureTimestamp(departure.plannedTime.getTime());
-                    }
-
-                    list.add(data);
         }
         return list;
     }
