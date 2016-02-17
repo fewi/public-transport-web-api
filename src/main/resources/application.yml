@@ -1,0 +1,15 @@
+server:
+    port: 11801
+
+---
+
+spring:
+    profiles: openshift
+logging:
+    file: ${OPENSHIFT_LOG_DIR}/app.log
+
+server:
+    port: ${OPENSHIFT_DIY_PORT}
+    address: ${OPENSHIFT_DIY_IP}
+
+
