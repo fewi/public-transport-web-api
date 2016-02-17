@@ -19,7 +19,7 @@ public class StationController {
 
     @RequestMapping(value = "/station/suggest", method = RequestMethod.GET)
     @ResponseBody
-    public SuggestLocationsResult suggest(@RequestParam("q") final String query, @RequestParam(value = "provider", required = true) String providerName) throws IOException {
+    public SuggestLocationsResult suggest(@RequestParam("q") final String query, @RequestParam(value = "provider") String providerName) throws IOException {
         NetworkProvider provider;
         if (providerName != null) {
             provider = ProviderUtil.getObjectForProvider(providerName);
