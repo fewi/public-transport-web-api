@@ -46,6 +46,7 @@ REST Endpoint description
 
 ###GET: /connection
 Lists all trips from one station to another with departure time and line number. 
+
 **Please note that only direct connections will be listed**
 
  **Parameter:**
@@ -85,6 +86,18 @@ Get next departure time for your trip. Lightwight for easy processing with the E
  
 **Example:** 
 /connectionEsp?from=6906508&to=6930811&product=T&timeOffset=5
+
+----------
+
+###GET: /departureFHEM
+Lists all departure trains of the given station in the format for FHEM. http://forum.fhem.de/index.php/topic,48255.0.html
+
+ **Parameter:**
+
+ 1. from -- Station id from departure station
+
+**Example:**
+/departureFHEM?from=6906508
 
 ----------
 
