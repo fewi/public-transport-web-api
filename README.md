@@ -32,12 +32,21 @@ Test URL for your Browser: http://localhost:8080/connection?from=6906508&to=6930
 REST Endpoint description
 -------------------
 
+### GET:  /provider
+ With this endpoint you can get all existing provider which can be used as optional parameter, default provider is VAG Freiburg (Vagfr)  
+ 
+**Example:** 
+/provider
+
+----------
+
 ### GET:  /station/suggest
  With this endpoint you can get the station ids which you need to use later.  
  
 **Parameter:**
  
  1. q -- Name of station you want to search
+ 2. providerName -- Name of the provider, for example: Vagfr
 
 **Example:** 
 /station/suggest?q=Technisches+Rathaus
@@ -54,7 +63,8 @@ Lists all trips from one station to another with departure time and line number.
  1. from -- Station id from departure station
  2. to -- Station id from the arrival station
  3. product -- Product you want to use ( T = Tram, B = Bus)
- 4. (optional) timeOffset -- Minutes e.g. you need to walk to the station. 
+ 4. (optional) timeOffset -- Minutes e.g. you need to walk to the station.
+ 5. providerName -- Name of the provider, for example: Vagfr
  
 **Example:** 
 /connection?from=6906508&to=6930811&product=T
@@ -67,6 +77,7 @@ Lists all departure trains of the given station
  **Parameter:**
 
  1. from -- Station id from departure station
+ 2. providerName -- Name of the provider, for example: Vagfr
 
 **Example:**
 /departure?from=6906508
@@ -82,7 +93,8 @@ Get next departure time for your trip. Lightwight for easy processing with the E
  1. from -- Station id from departure station
  2. to -- Station id from the arrival station
  3. product -- Product you want to use ( T = Tram, B = Bus)
- 4. (optional) timeOffset -- Minutes e.g. you need to walk to the station. 
+ 4. (optional) timeOffset -- Minutes e.g. you need to walk to the station.
+ 5. providerName -- Name of the provider, for example: Vagfr
  
 **Example:** 
 /connectionEsp?from=6906508&to=6930811&product=T&timeOffset=5
@@ -95,6 +107,7 @@ Lists all departure trains of the given station in the format for FHEM. http://f
  **Parameter:**
 
  1. from -- Station id from departure station
+ 2. providerName -- Name of the provider, for example: Vagfr
 
 **Example:**
 /departureFHEM?from=6906508
@@ -110,6 +123,7 @@ Lists all trips from one station to another with with all data the public-transp
  2. to -- Station id from the arrival station
  3. product -- Product you want to use ( T = Tram, B = Bus)
  4. (optional) timeOffset -- Minutes e.g. you need to walk to the station. 
+ 5. providerName -- Name of the provider, for example: Vagfr
  
 **Example:** 
 /connectionRaw?from=6906508&to=6930811&product=T
