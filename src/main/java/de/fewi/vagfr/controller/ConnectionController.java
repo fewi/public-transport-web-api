@@ -1,6 +1,8 @@
 package de.fewi.vagfr.controller;
 
+import de.fewi.vagfr.ProviderUtil;
 import de.fewi.vagfr.entity.TripData;
+import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
@@ -26,13 +28,19 @@ import java.util.List;
 
 @Controller
 public class ConnectionController {
-    private final VagfrProvider provider = new VagfrProvider();
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
     private Date plannedDepartureTime = new Date();
 
     @RequestMapping(value = "/connection", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity connection(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+    public ResponseEntity connection(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+        NetworkProvider provider;
+        if(providerName != null)
+        {
+            provider = ProviderUtil.getObjectForProvider(providerName);
+        }
+        else
+            provider = new VagfrProvider();
         plannedDepartureTime.setTime(new Date().getTime() + timeOffset * 60 * 1000);
         char[] products = {product};
         QueryTripsResult efaData = provider.queryTrips(new Location(LocationType.STATION, from), null, new Location(LocationType.STATION, to), plannedDepartureTime, true, Product.fromCodes(products), null, null, null, null);
@@ -41,7 +49,7 @@ public class ConnectionController {
             List<TripData> list = filterTrips(efaData.trips, from, to, "normal");
 
             if (list.size() < 1) {
-                List<TripData> retryList = findMoreTrips(efaData.context, from, to, "normal");
+                List<TripData> retryList = findMoreTrips(efaData.context, from, to, "normal", provider);
                 if (retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
@@ -55,7 +63,14 @@ public class ConnectionController {
 
     @RequestMapping(value = "/connectionEsp", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity departureEsp(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+    public ResponseEntity departureEsp(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+        NetworkProvider provider;
+        if(providerName != null)
+        {
+            provider = ProviderUtil.getObjectForProvider(providerName);
+        }
+        else
+            provider = new VagfrProvider();
         plannedDepartureTime.setTime(new Date().getTime() + timeOffset * 60 * 1000);
         char[] products = {product};
         QueryTripsResult efaData = provider.queryTrips(new Location(LocationType.STATION, from), null, new Location(LocationType.STATION, to), plannedDepartureTime, true, Product.fromCodes(products), null, null, null, null);
@@ -63,7 +78,7 @@ public class ConnectionController {
             List<TripData> list = filterTrips(efaData.trips, from, to, "esp");
 
             if (list.size() < 1) {
-                List<TripData> retryList = findMoreTrips(efaData.context, from, to, "esp");
+                List<TripData> retryList = findMoreTrips(efaData.context, from, to, "esp", provider);
                 if (retryList.size() < 1)
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No trip found.");
                 else
@@ -77,7 +92,14 @@ public class ConnectionController {
 
     @RequestMapping(value = "/connectionRaw", method = RequestMethod.GET)
     @ResponseBody
-    public List<Trip> test(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+    public List<Trip> test(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "to", required = true) String to, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "product", required = true) char product, @RequestParam(value = "timeOffset", required = true, defaultValue = "0") int timeOffset) throws IOException {
+        NetworkProvider provider;
+        if(providerName != null)
+        {
+            provider = ProviderUtil.getObjectForProvider(providerName);
+        }
+        else
+            provider = new VagfrProvider();
         plannedDepartureTime.setTime(new Date().getTime() + timeOffset * 60 * 1000);
         char[] products = {product};
         QueryTripsResult efaData = provider.queryTrips(new Location(LocationType.STATION, from), null, new Location(LocationType.STATION, to), plannedDepartureTime, true, Product.fromCodes(products), null, null, null, null);
@@ -130,7 +152,7 @@ public class ConnectionController {
     }
     
 
-    private List<TripData> findMoreTrips(QueryTripsContext context, String from, String to, String mode) {
+    private List<TripData> findMoreTrips(QueryTripsContext context, String from, String to, String mode, NetworkProvider provider) {
         List<TripData> data = new ArrayList();
         QueryTripsContext newContext = context;
         int count = 0;
