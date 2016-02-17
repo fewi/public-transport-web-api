@@ -1,6 +1,8 @@
 package de.fewi.vagfr.controller;
 
+import de.fewi.vagfr.ProviderUtil;
 import de.fewi.vagfr.entity.DepartureData;
+import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.QueryDeparturesResult;
@@ -23,13 +25,15 @@ import java.util.List;
 
 @Controller
 public class DepartureController {
-    private final VagfrProvider provider = new VagfrProvider();
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 
 
     @RequestMapping(value = "/departure", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+        NetworkProvider provider = getNetworkProvider(providerName);
+        if(provider == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
         QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
         if (efaData.status.name().equals("OK")) {
             List<DepartureData> list = convertDepartures(efaData.findStationDepartures(from));
@@ -40,13 +44,27 @@ public class DepartureController {
 
     @RequestMapping(value = "/departureFHEM", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity departureFHEM(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+    public ResponseEntity departureFHEM(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+        NetworkProvider provider = getNetworkProvider(providerName);
+        if(provider == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
         QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
         if (efaData.status.name().equals("OK")) {
            String data = convertDeparturesFHEM(efaData.findStationDepartures(from));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(data);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
+    }
+
+    private NetworkProvider getNetworkProvider(@RequestParam(value = "provider", required = true) String providerName) {
+        NetworkProvider provider;
+        if(providerName != null)
+        {
+            provider = ProviderUtil.getObjectForProvider(providerName);
+        }
+        else
+            provider = new VagfrProvider();
+        return provider;
     }
 
     private String convertDeparturesFHEM(StationDepartures stationDepartures) {
