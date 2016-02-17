@@ -2,10 +2,7 @@ package de.fewi.vagfr.entity;
 
 import java.io.Serializable;
 
-public class TripData implements Serializable {
-    private String from;
-    private String fromId;
-
+public class DepartureData implements Serializable {
     private String to;
     private String toId;
 
@@ -13,36 +10,11 @@ public class TripData implements Serializable {
     private String number;
 
     private String departureTime;
-    private String plannedDepartureTime;
 
     private long departureTimestamp;
-    private long plannedDepartureTimestamp;
-
     private long departureDelay;
 
-    public long getDepartureTimestamp() {
-        return departureTimestamp;
-    }
-
-    public void setDepartureTimestamp(long departureTimestamp) {
-        this.departureTimestamp = departureTimestamp;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public String getFromId() {
-        return fromId;
-    }
-
-    public void setFromId(String fromId) {
-        this.fromId = fromId;
-    }
+    private String platform;
 
     public String getTo() {
         return to;
@@ -84,20 +56,12 @@ public class TripData implements Serializable {
         this.departureTime = departureTime;
     }
 
-    public String getPlannedDepartureTime() {
-        return plannedDepartureTime;
+    public long getDepartureTimestamp() {
+        return departureTimestamp;
     }
 
-    public void setPlannedDepartureTime(String plannedDepartureTime) {
-        this.plannedDepartureTime = plannedDepartureTime;
-    }
-
-    public long getPlannedDepartureTimestamp() {
-        return plannedDepartureTimestamp;
-    }
-
-    public void setPlannedDepartureTimestamp(long plannedDepartureTimestamp) {
-        this.plannedDepartureTimestamp = plannedDepartureTimestamp;
+    public void setDepartureTimestamp(long departureTimestamp) {
+        this.departureTimestamp = departureTimestamp;
     }
 
     public long getDepartureDelay() {
@@ -108,4 +72,11 @@ public class TripData implements Serializable {
         this.departureDelay = departureDelay;
     }
 
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
 }

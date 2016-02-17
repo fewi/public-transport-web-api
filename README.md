@@ -7,8 +7,16 @@ This application is a small rest wrapper for public transport data e.g. Tram or 
 
 I started this project for an IoT Application with the ESP8266. The repository can be found here: [Internet-of-Things-with-ESP8266](https://github.com/fewi/Internet-of-Things-with-ESP8266)
 
-----------
 
+Checkout from GitHub
+----------
+Don't forget to init and update git submodules for the public-transport-enabler library.
+
+cd vagfr-rest-wrapper
+
+git submodule init
+
+git submodule update
 
 Run the application
 -------------
@@ -34,9 +42,7 @@ REST Endpoint description
 **Example:** 
 /station/suggest?q=Technisches+Rathaus
 
-
 ----------
-
 
 ###GET: /connection
 Lists all trips from one station to another with departure time and line number. 
@@ -51,6 +57,18 @@ Lists all trips from one station to another with departure time and line number.
  
 **Example:** 
 /connection?from=6906508&to=6930811&product=T
+
+----------
+
+###GET: /departure
+Lists all departure trains of the given station
+
+ **Parameter:**
+
+ 1. from -- Station id from departure station
+
+**Example:**
+/departure?from=6906508
 
 ----------
 
@@ -82,5 +100,3 @@ Lists all trips from one station to another with with all data the public-transp
  
 **Example:** 
 /connectionRaw?from=6906508&to=6930811&product=T
-
-
