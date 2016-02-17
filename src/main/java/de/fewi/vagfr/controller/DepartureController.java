@@ -30,7 +30,7 @@ public class DepartureController {
 
     @RequestMapping(value = "/departure", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+    public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider") String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
         NetworkProvider provider = getNetworkProvider(providerName);
         if(provider == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
@@ -44,7 +44,7 @@ public class DepartureController {
 
     @RequestMapping(value = "/departureFHEM", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity departureFHEM(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider", required = true) String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
+    public ResponseEntity departureFHEM(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider") String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
         NetworkProvider provider = getNetworkProvider(providerName);
         if(provider == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
