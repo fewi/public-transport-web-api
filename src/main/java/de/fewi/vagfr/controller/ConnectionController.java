@@ -149,7 +149,7 @@ public class ConnectionController {
                     if(departure.position != null)
                         data.setPlatform(departure.position.name);
                     //Predicted time
-                    if(departure.predictedTime != departure.plannedTime && departure.predictedTime != null) {
+                    if(departure.predictedTime != null && departure.predictedTime.after(departure.plannedTime)) {
                         data.setDepartureTime(df.format(departure.predictedTime));
                         data.setDepartureTimestamp(departure.predictedTime.getTime());
                         data.setDepartureDelay((departure.predictedTime.getTime() - departure.plannedTime.getTime())/1000);
