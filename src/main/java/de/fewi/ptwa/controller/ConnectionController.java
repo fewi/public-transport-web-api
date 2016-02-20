@@ -1,6 +1,6 @@
 package de.fewi.ptwa.controller;
 
-import de.fewi.ptwa.ProviderUtil;
+import de.fewi.ptwa.util.ProviderUtil;
 import de.fewi.ptwa.entity.TripData;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.VagfrProvider;
