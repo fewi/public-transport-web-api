@@ -1,4 +1,4 @@
-package de.fewi.vagfr.entity;
+package de.fewi.ptwa.entity;
 
 import java.io.Serializable;
 

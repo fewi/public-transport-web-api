@@ -1,7 +1,7 @@
-package de.fewi.vagfr.controller;
+package de.fewi.ptwa.controller;
 
-import de.fewi.vagfr.ProviderUtil;
-import de.fewi.vagfr.entity.DepartureData;
+import de.fewi.ptwa.util.ProviderUtil;
+import de.fewi.ptwa.entity.DepartureData;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.Departure;

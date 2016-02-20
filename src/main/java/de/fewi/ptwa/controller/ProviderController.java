@@ -1,6 +1,6 @@
-package de.fewi.vagfr.controller;
+package de.fewi.ptwa.controller;
 
-import de.fewi.vagfr.entity.Provider;
+import de.fewi.ptwa.entity.Provider;
 import de.schildbach.pte.NetworkProvider;
 import org.reflections.Reflections;
 import org.springframework.http.HttpStatus;

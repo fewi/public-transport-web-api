@@ -1,10 +1,7 @@
-package de.fewi.vagfr;
+package de.fewi.ptwa.util;
 
 import de.schildbach.pte.NetworkProvider;
 
-/**
- * Created by sbn on 17.02.2016.
- */
 public class ProviderUtil {
 
     public static NetworkProvider getObjectForProvider(String providerName) {

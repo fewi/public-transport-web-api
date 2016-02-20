@@ -3,7 +3,7 @@
 Project description
 ----------------------
 
-This application is a small rest wrapper for public transport data e.g. Tram or Bus in Freiburg im Breisgau. I'm using the [public-transport-enabler](https://github.com/schildbach/public-transport-enabler) project for retrieving the data.
+This application is a small web api for the [public-transport-enabler](https://github.com/schildbach/public-transport-enabler).
 
 I started this project for an IoT Application with the ESP8266. The repository can be found here: [Internet-of-Things-with-ESP8266](https://github.com/fewi/Internet-of-Things-with-ESP8266)
 

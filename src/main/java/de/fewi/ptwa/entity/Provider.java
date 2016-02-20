@@ -1,8 +1,5 @@
-package de.fewi.vagfr.entity;
+package de.fewi.ptwa.entity;
 
-/**
- * Created by sbn on 17.02.2016.
- */
 public class Provider {
 
     private String name;
