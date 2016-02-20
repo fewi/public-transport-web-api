@@ -1,4 +1,4 @@
-package de.fewi.vagfr;
+package de.fewi.ptwa;
 
 import de.schildbach.pte.NetworkProvider;
 

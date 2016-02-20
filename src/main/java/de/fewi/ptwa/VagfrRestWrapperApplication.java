@@ -1,4 +1,4 @@
-package de.fewi.vagfr;
+package de.fewi.ptwa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
