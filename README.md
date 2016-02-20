@@ -1,4 +1,4 @@
-#vagfr-rest-wrapper
+#public-transport-web-api
 
 Project description
 ----------------------
@@ -128,6 +128,7 @@ Lists all trips from one station to another with with all data the public-transp
 **Example:** 
 /connectionRaw?from=6906508&to=6930811&product=T
 
+----------
 
 Run the application in Openshift
 -------------
