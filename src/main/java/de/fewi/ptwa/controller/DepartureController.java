@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -34,7 +35,7 @@ public class DepartureController {
         NetworkProvider provider = getNetworkProvider(providerName);
         if(provider == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
-        QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
+        QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
         if (efaData.status.name().equals("OK")) {
             List<DepartureData> list = convertDepartures(efaData.findStationDepartures(from));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
@@ -48,9 +49,18 @@ public class DepartureController {
         NetworkProvider provider = getNetworkProvider(providerName);
         if(provider == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
-        QueryDeparturesResult efaData = provider.queryDepartures(from, null, maxValues, true);
+        QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
         if (efaData.status.name().equals("OK")) {
-           String data = convertDeparturesFHEM(efaData.findStationDepartures(from));
+            String data = "";
+            if(efaData.findStationDepartures(from) == null) {
+                for (StationDepartures stationDeparture : efaData.stationDepartures) {
+                    data += "," + convertDeparturesFHEM(stationDeparture);
+                    data = data.substring(0, data.lastIndexOf(']'));
+                }
+                data = data.substring(1)+"]";
+            }
+            else
+                data = convertDeparturesFHEM(efaData.findStationDepartures(from));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(data);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
