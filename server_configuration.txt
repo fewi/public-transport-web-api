@@ -51,3 +51,6 @@ chmod 664 /etc/systemd/system/vagfr.service
 
 systemctl enable vagfr.service
 
+
+//Update sublibs
+git submodule foreach git pull origin master
