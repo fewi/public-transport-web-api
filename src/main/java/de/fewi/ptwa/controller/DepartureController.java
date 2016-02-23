@@ -37,7 +37,12 @@ public class DepartureController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider "+providerName+" not found or can not instantiated...");
         QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
         if (efaData.status.name().equals("OK")) {
-            List<DepartureData> list = convertDepartures(efaData.findStationDepartures(from));
+            List<DepartureData> list = null;
+            if(efaData.findStationDepartures(from) == null && !efaData.stationDepartures.isEmpty()) {
+                list = convertDepartures(efaData.stationDepartures.get(0));
+            }
+            else
+                list = convertDepartures(efaData.findStationDepartures(from));
             return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
@@ -52,12 +57,8 @@ public class DepartureController {
         QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
         if (efaData.status.name().equals("OK")) {
             String data = "";
-            if(efaData.findStationDepartures(from) == null) {
-                for (StationDepartures stationDeparture : efaData.stationDepartures) {
-                    data += "," + convertDeparturesFHEM(stationDeparture);
-                    data = data.substring(0, data.lastIndexOf(']'));
-                }
-                data = data.substring(1)+"]";
+            if(efaData.findStationDepartures(from) == null && !efaData.stationDepartures.isEmpty()) {
+                data = convertDeparturesFHEM(efaData.stationDepartures.get(0));
             }
             else
                 data = convertDeparturesFHEM(efaData.findStationDepartures(from));
