@@ -2,7 +2,7 @@ package de.fewi.ptwa.entity;
 
 import java.io.Serializable;
 
-public class DepartureData implements Serializable {
+public class DepartureData implements Serializable, Comparable<DepartureData> {
     private String to;
     private String toId;
 
@@ -13,6 +13,8 @@ public class DepartureData implements Serializable {
 
     private long departureTimestamp;
     private long departureDelay;
+
+    private int departureTimeInMinutes;
 
     private String platform;
 
@@ -79,4 +81,19 @@ public class DepartureData implements Serializable {
     public void setPlatform(String platform) {
         this.platform = platform;
     }
+
+    public int getDepartureTimeInMinutes() {
+        return departureTimeInMinutes;
+    }
+
+    public void setDepartureTimeInMinutes(int departureTimeInMinutes) {
+        this.departureTimeInMinutes = departureTimeInMinutes;
+    }
+
+    @Override
+    public int compareTo(DepartureData o) {
+        return this.departureTimeInMinutes-o.departureTimeInMinutes;
+    }
+
+
 }
