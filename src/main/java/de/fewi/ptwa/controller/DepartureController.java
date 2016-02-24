@@ -10,6 +10,7 @@ import de.schildbach.pte.dto.StationDepartures;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,55 +32,84 @@ import java.util.List;
 public class DepartureController {
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 
+    private static int counter = 0;
 
     @RequestMapping(value = "/departure", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity departure(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider", required = false) String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
-        NetworkProvider provider = getNetworkProvider(providerName);
-        if (provider == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider " + providerName + " not found or can not instantiated...");
-        QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
-        if (efaData.status.name().equals("OK")) {
-            List<DepartureData> list = new ArrayList<>();
-            if (efaData.findStationDepartures(from) == null && !efaData.stationDepartures.isEmpty()) {
-                for (StationDepartures stationDeparture : efaData.stationDepartures) {
-                    list.addAll(convertDepartures(stationDeparture));
-                }
-                Collections.sort(list);
-            } else
-                list.addAll(convertDepartures(efaData.findStationDepartures(from)));
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
+        try {
+            NetworkProvider provider = getNetworkProvider(providerName);
+            if (provider == null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider " + providerName + " not found or can not instantiated...");
+            QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
+            if (efaData.status.name().equals("OK")) {
+                List<DepartureData> list = new ArrayList<>();
+                if (efaData.findStationDepartures(from) == null && !efaData.stationDepartures.isEmpty()) {
+                    for (StationDepartures stationDeparture : efaData.stationDepartures) {
+                        list.addAll(convertDepartures(stationDeparture));
+                    }
+                    Collections.sort(list);
+                } else
+                    list.addAll(convertDepartures(efaData.findStationDepartures(from)));
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
+        }finally
+        {
+            counter++;
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
     }
 
     @RequestMapping(value = "/departureFHEM", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity departureFHEM(@RequestParam(value = "from", required = true) String from, @RequestParam(value = "provider", required = false) String providerName, @RequestParam(value = "maxMinutes", defaultValue = "59") int maxValues) throws IOException {
-        NetworkProvider provider = getNetworkProvider(providerName);
-        if (provider == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider " + providerName + " not found or can not instantiated...");
-        QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
-        if (efaData.status.name().equals("OK")) {
-            String data = "";
-            if (efaData.findStationDepartures(from) == null && !efaData.stationDepartures.isEmpty()) {
-                List<DepartureData> list = new ArrayList<>();
-                for (StationDepartures stationDeparture : efaData.stationDepartures) {
-                    list.addAll(convertDepartures(stationDeparture));
-                }
-                Collections.sort(list);
-                StringBuffer sb = new StringBuffer();
-                sb.append("[");
-                for (DepartureData departureData : list) {
-                    sb.append("[\"" + departureData.getNumber() + "\",\"" + departureData.getTo() + "\",\"" + departureData.getDepartureTimeInMinutes() + "\"],");
-                }
-                String lines = sb.toString();
-                data = lines.substring(0, lines.lastIndexOf(',')) + "]";
-            } else
-                data = convertDeparturesFHEM(efaData.findStationDepartures(from));
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(data);
+        try {
+            NetworkProvider provider = getNetworkProvider(providerName);
+            if (provider == null)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider " + providerName + " not found or can not instantiated...");
+            QueryDeparturesResult efaData = provider.queryDepartures(from, new Date(), maxValues, true);
+            if (efaData.status.name().equals("OK")) {
+                String data = "";
+                if (efaData.findStationDepartures(from) == null && !efaData.stationDepartures.isEmpty()) {
+                    List<DepartureData> list = new ArrayList<>();
+                    for (StationDepartures stationDeparture : efaData.stationDepartures) {
+                        list.addAll(convertDepartures(stationDeparture));
+                    }
+                    Collections.sort(list);
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("[");
+                    for (DepartureData departureData : list) {
+                        sb.append("[\"" + departureData.getNumber() + "\",\"" + departureData.getTo() + "\",\"" + departureData.getDepartureTimeInMinutes() + "\"],");
+                    }
+                    String lines = sb.toString();
+                    data = lines.substring(0, lines.lastIndexOf(',')) + "]";
+                } else
+                    data = convertDeparturesFHEM(efaData.findStationDepartures(from));
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(data);
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
+        }finally {
+            counter++;
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("EFA error status: " + efaData.status.name());
+
+    }
+
+    //@Scheduled(initialDelay=10000, fixedRate=300000)
+    public void doSomething() {
+        String url = "http://api.thingspeak.com/update?key=";
+        url += "replaceme";
+        url += "&field1=";
+        url += counter;
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.getResponseCode();
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        counter = 0;
+
     }
 
     private NetworkProvider getNetworkProvider(String providerName) {
