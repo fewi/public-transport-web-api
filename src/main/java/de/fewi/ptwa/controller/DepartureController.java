@@ -22,11 +22,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class DepartureController {
@@ -132,8 +134,9 @@ public class DepartureController {
             } else {
                 time = departure.plannedTime.getTime();
             }
-            time = (time - cal.getTimeInMillis()) / 1000 / 60;
-            sb.append("[\"" + departure.line.label + "\",\"" + departure.destination.name + "\",\"" + time + "\"],");
+            time = (time - cal.getTimeInMillis());
+            float depMinutes = (float)time / 1000 / 60;
+            sb.append("[\"" + departure.line.label + "\",\"" + departure.destination.name + "\",\"" + (int)Math.ceil(depMinutes) + "\"],");
         }
         String lines = sb.toString();
         return lines.substring(0, lines.lastIndexOf(',')) + "]";
@@ -143,6 +146,7 @@ public class DepartureController {
     private List<DepartureData> convertDepartures(StationDepartures stationDepartures) {
         Calendar cal = Calendar.getInstance();
         List<DepartureData> list = new ArrayList();
+        LocalDateTime endDate = LocalDateTime.now();
         for (Departure departure : stationDepartures.departures) {
             DepartureData data = new DepartureData();
             data.setTo(departure.destination.name);
@@ -151,7 +155,7 @@ public class DepartureController {
             data.setNumber(departure.line.label);
             if (departure.position != null)
                 data.setPlatform(departure.position.name);
-            long time = 0;
+            long time;
             //Predicted time
             if (departure.predictedTime != null && departure.predictedTime.after(departure.plannedTime)) {
                 data.setDepartureTime(df.format(departure.predictedTime));
@@ -163,8 +167,9 @@ public class DepartureController {
                 data.setDepartureTimestamp(departure.plannedTime.getTime());
                 time = departure.plannedTime.getTime();
             }
-            time = (time - cal.getTimeInMillis()) / 1000 / 60;
-            data.setDepartureTimeInMinutes((int) time);
+            time = (time - cal.getTimeInMillis());
+            float depMinutes = (float)time / 1000 / 60;
+            data.setDepartureTimeInMinutes((int) Math.ceil(depMinutes));
             list.add(data);
         }
         return list;
