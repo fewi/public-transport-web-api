@@ -78,6 +78,7 @@ Lists all departure trains of the given station
 
  1. from -- Station id from departure station
  2. (optional) providerName -- Name of the provider, for example: Vagfr
+ 3. (optional) limit -- Limit the result set, default 10
 
 **Example:**
 /departure?from=6906508
@@ -108,9 +109,10 @@ Lists all departure trains of the given station in the format for FHEM. http://f
 
  1. from -- Station id from departure station
  2. (optional) providerName -- Name of the provider, for example: Vagfr
+ 3. (optional) limit -- Limit the result set, default 10
 
 **Example:**
-/departureFHEM?from=6906508
+/departureFHEM?from=6906508&limit=6
 
 ----------
 
