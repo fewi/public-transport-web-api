@@ -7,6 +7,7 @@ import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,12 @@ public class DepartureController {
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 
     private static int counter = 0;
+
+    @Value("${thingspeak.key}")
+    private String thingspeakKey;
+
+    @Value("${thingspeak.channel")
+    private String thingspeakChannel;
 
     @RequestMapping(value = "/departure", method = RequestMethod.GET)
     @ResponseBody
@@ -102,11 +109,13 @@ public class DepartureController {
 
     }
 
-    //@Scheduled(initialDelay=10000, fixedRate=300000)
+    @Scheduled(initialDelay=10000, fixedRate=300000)
     public void doSomething() {
+        if(thingspeakKey == null || thingspeakKey.isEmpty())
+            return;
         String url = "http://api.thingspeak.com/update?key=";
-        url += "replaceme";
-        url += "&field1=";
+        url += thingspeakKey;
+        url += "&"+thingspeakChannel+"=";
         url += counter;
         try {
             URL obj = new URL(url);

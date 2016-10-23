@@ -1,6 +1,8 @@
 server:
     port: 8080
-
+thingspeak:
+    key:
+    channel: field1
 ---
 
 spring:
