@@ -40,7 +40,7 @@ public class DepartureController {
     @Value("${thingspeak.key}")
     private String thingspeakKey;
 
-    @Value("${thingspeak.channel")
+    @Value("${thingspeak.channel}")
     private String thingspeakChannel;
 
     @RequestMapping(value = "/departure", method = RequestMethod.GET)
