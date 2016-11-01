@@ -47,6 +47,7 @@ REST Endpoint description
  
  1. q -- Name of station you want to search
  2. (optional) providerName -- Name of the provider, for example: Vagfr
+ 3. (optional) locationType -- type of the locations, default: ANY, possible values. ANY, STATION, STREET, POI
 
 **Example:** 
 /station/suggest?q=Technisches+Rathaus
