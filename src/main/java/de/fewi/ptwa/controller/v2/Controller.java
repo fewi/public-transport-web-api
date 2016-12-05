@@ -8,7 +8,6 @@ package de.fewi.ptwa.controller.v2;
 import de.fewi.ptwa.entity.DepartureData;
 import de.fewi.ptwa.entity.Provider;
 import de.fewi.ptwa.util.ProviderUtil;
-import de.schildbach.pte.NetworkId;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.Departure;
