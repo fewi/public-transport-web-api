@@ -5,11 +5,9 @@
  */
 package de.fewi.ptwa.controller.v2;
 
-import de.fewi.ptwa.entity.DepartureData;
-import de.fewi.ptwa.entity.Provider;
-import de.fewi.ptwa.util.ProviderUtil;
+import de.fewi.ptwa.controller.v2.model.DepartureData;
+import de.fewi.ptwa.controller.v2.model.ProviderEnum;
 import de.schildbach.pte.NetworkProvider;
-import de.schildbach.pte.VagfrProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.Location;
@@ -27,8 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import org.reflections.Reflections;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,42 +40,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @org.springframework.stereotype.Controller
 public class Controller {
 
-//    @RequestMapping(value = "/version", method = RequestMethod.GET)
-//    @ResponseBody
-//    public ResponseEntity<String> getVersion() {
-//        return ResponseEntity.ok("v2");
-//    }
 
     @RequestMapping(value = "/v2/provider", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity providerlist() throws IOException {
-        List<Provider> list = new ArrayList();
-
-        Set<Class<? extends NetworkProvider>> reflection = new Reflections("de.schildbach.pte").getSubTypesOf(NetworkProvider.class);
-        for (Class<? extends NetworkProvider> implClass : reflection) {
-            if (implClass.getSimpleName().startsWith("Abstract")) {
-                continue;
-            }
-            Provider provider = new Provider();
-            provider.setName(implClass.getSimpleName().substring(0, implClass.getSimpleName().indexOf("Provider")));
-            provider.setClass(implClass.getSimpleName());
-            list.add(provider);
+        List<de.fewi.ptwa.controller.v2.model.Provider> list = new ArrayList();
+        for (ProviderEnum each : ProviderEnum.values()) {
+            list.add(each.asProvider());
         }
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list);
     }
-
+    
+    @RequestMapping(value ="/v2/station/nearby", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity findNearbyLocations(@RequestParam(value = "provider", required = false) String providerName) {
+        NetworkProvider networkProvider = getNetworkProvider(providerName);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(networkProvider != null ? networkProvider.defaultProducts() : "");
+    }
+    
+    
     @RequestMapping(value = "/v2/station/suggest", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity suggest(@RequestParam("q") final String query, @RequestParam(value = "provider", required = false) String providerName, @RequestParam(value = "locationType", required = false) String stationType) throws IOException {
-        NetworkProvider provider;
-        if (providerName != null) {
-            provider = ProviderUtil.getObjectForProvider(providerName);
-        } else {
-            provider = new VagfrProvider();
-        }
-        if (provider == null) {
+        NetworkProvider provider = getNetworkProvider(providerName);
+        if (provider == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Provider " + providerName + " not found or can not instantiated...");
-        }
+        
         SuggestLocationsResult suggestLocations = provider.suggestLocations(query);
         if (SuggestLocationsResult.Status.OK.equals(suggestLocations.status)) {
             Iterator<Location> iterator = suggestLocations.getLocations().iterator();
@@ -132,15 +118,7 @@ public class Controller {
 
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 
-    private NetworkProvider getNetworkProvider(String providerName) {
-        NetworkProvider provider;
-        if (providerName != null) {
-            provider = ProviderUtil.getObjectForProvider(providerName);
-        } else {
-            provider = new VagfrProvider();
-        }
-        return provider;
-    }
+    
 
     private List<DepartureData> convertDepartures(StationDepartures stationDepartures, String numberFilter, String toFilter) {
         Calendar cal = Calendar.getInstance();
@@ -151,6 +129,7 @@ public class Controller {
                 continue;
             }
             DepartureData data = new DepartureData();
+            data.setMessage(departure.message);
             data.setTo(departure.destination.name);
             data.setToId(departure.destination.id);
             data.setProduct(departure.line.product.toString());
@@ -204,6 +183,17 @@ public class Controller {
             }
         }
         return true;
+    }
+    
+    private NetworkProvider getNetworkProvider(String providerName) {
+        try {
+            if (providerName != null) {
+                ProviderEnum provider = ProviderEnum.valueOf(providerName.toUpperCase());
+                return provider.newNetworkProvider();
+            }
+        } catch (RuntimeException e) {
+        }
+        return null;
     }
 
 }
