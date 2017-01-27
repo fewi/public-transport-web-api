@@ -50,7 +50,7 @@ public class ProviderEnumTest {
      */
     @Test
     public void testBVG() {
-        Assert.assertTrue(BvgProvider.class == ProviderEnum.BVG.providerClass());
+        Assert.assertTrue(ProviderEnum.BVG.newNetworkProvider() instanceof BvgProvider);
         Assert.assertEquals("", "Berliner Verkehrsgesellschaft",ProviderEnum.BVG.label());
     }
     
@@ -59,7 +59,7 @@ public class ProviderEnumTest {
      */
     @Test
     public void testKVV() {
-        Assert.assertTrue(KvvProvider.class == ProviderEnum.KVV.providerClass());
+        Assert.assertTrue(ProviderEnum.KVV.newNetworkProvider() instanceof KvvProvider);
         Assert.assertEquals("", "Karlsruher Verkehrsverbund",ProviderEnum.KVV.label());
     }
     
@@ -68,7 +68,7 @@ public class ProviderEnumTest {
      */
     @Test
     public void testVMS() {
-        Assert.assertTrue(VmsProvider.class == ProviderEnum.VMS.providerClass());
+        Assert.assertTrue(ProviderEnum.VMS.newNetworkProvider() instanceof VmsProvider );
         Assert.assertEquals("", "Verkehrsverbund Mittelsachsen",ProviderEnum.VMS.label());
     }
     
@@ -77,7 +77,7 @@ public class ProviderEnumTest {
      */
     @Test
     public void testVBB() {
-        Assert.assertTrue(VbbProvider.class == ProviderEnum.VBB.providerClass());
+        Assert.assertTrue(ProviderEnum.VBB.newNetworkProvider() instanceof VbbProvider);
         Assert.assertEquals("", "Verkehrsverbund Berlin Brandenburg",ProviderEnum.VBB.label());
     }
     
