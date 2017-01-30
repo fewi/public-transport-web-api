@@ -1,6 +1,15 @@
 language: java
 jdk:
-  - oraclejdk8
- 
+- oraclejdk8
 before_install:
- - chmod +x gradlew
+- chmod +x gradlew
+deploy:
+  provider: openshift
+  user: uniqueck
+  password:
+    secure: SoUDmsh9KAebK+MtQ6RtH7mLa/qQwfbEaA4wxtidN75tdRQsqWhas6VrJLD6MeMxaD3UV6yHBMk8V0sSbGgSBAT2ZRnp89l8tq8/WhMZ9TtcefuWrqXIpNEmflVFspqXuC2ScOb5hHa2+WwR6uOFUIKciB1zws78Oq7ZnUdosBxKd2DOUAwjcwGO5yFYGtD9nOS8bSz/RWUacqvsGWYvFEhisnuaJzA4y4+/W/CGP+Bj8YlyCvOJ9htuM4oTaTJy5g6Ce6YZbByM9uIQ39C53lVVR+vyew5k7kLyVpXUWRWLFvPfnsm3B85Hf4nMxbdnpysr1xhcPDC6gtyfWMFysxXjit2SAJT8CpFhG/qcoi8HhNbZT2Q6HwcrSgyWyMZCbDdFCwkgCSng9UwqCduwmEWOETXplpreiT57J0Pkyi0GRh8EiAqZl0kKJ86fphvaeVNOqax9imd8hbohDC7ZZs6fJHi5nmnnKxFf+yxYlRqkA43PsNmg7k2QmdEsz2PxKmgHU/P/9n/8W7WWnEFxh/AzXknz+2AOfDxfBA3JUL8GfYa18cKOnhMEFitpgRN/fjF/1ztG6rEMjOqOluMg68V8ZsGz1ZJnJvTVbbtOHxT+7qDNFsm7tg2dsWVqDjyzXD7p9JygAQI31qaJGUY7Z3RrB4JRVWNz4/RFS23Ug9o=
+  app: fhem-departure
+  domain: www.fhem-departure.rhcloud.com
+  on:
+    repo: uniqueck/public-transport-web-api
+    branch: feature/provider_description
