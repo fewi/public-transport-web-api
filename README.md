@@ -1,4 +1,4 @@
-#public-transport-web-api
+#public-transport-web-api [![Build Status](https://travis-ci.org/fewi/public-transport-web-api.svg?branch=master)](https://travis-ci.org/fewi/public-transport-web-api)
 
 Project description
 ----------------------
