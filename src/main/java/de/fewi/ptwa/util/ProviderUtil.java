@@ -3,15 +3,15 @@ package de.fewi.ptwa.util;
 import de.schildbach.pte.AbstractNavitiaProvider;
 import de.schildbach.pte.NetworkProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 
+@Component
 public class ProviderUtil {
 
-    @Value("${providerkey.navitia}")
     private static String navitiaKey;
-
-    @Value("${providerkey.bvg}")
+    
     private static String bvgKey;
 
     public static NetworkProvider getObjectForProvider(String providerName) {
@@ -39,5 +39,15 @@ public class ProviderUtil {
         } catch (InvocationTargetException e) {
             return null;
         }
+    }
+    
+    @Value("${providerkey.navitia}")
+    public void setNavitiaKey(String navitiaKey) {
+        ProviderUtil.navitiaKey = navitiaKey;
+    }
+
+    @Value("${providerkey.bvg}")
+    public void setBvgKey(String bvgKey) {
+        ProviderUtil.bvgKey = bvgKey;
     }
 }
