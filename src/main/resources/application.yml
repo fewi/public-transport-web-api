@@ -3,6 +3,9 @@ server:
 thingspeak:
     key:
     channel: field1
+providerkey:
+   navitia:
+   bvg:
 ---
 
 spring:

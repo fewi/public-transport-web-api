@@ -11,6 +11,9 @@ import de.schildbach.pte.KvvProvider;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.VbbProvider;
 import de.schildbach.pte.VmsProvider;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *
@@ -20,6 +23,8 @@ public enum ProviderEnum {
 
     KVV(KvvProvider.class), BVG(BvgProvider.class), VMS(VmsProvider.class), VBB(VbbProvider.class);
 
+    @Value("${providerkey.bvg}")
+    private String bvgKey;
    
     private final Class<? extends NetworkProvider> providerClass;
 
@@ -33,8 +38,14 @@ public enum ProviderEnum {
 
     public NetworkProvider newNetworkProvider() {
         try {
+            if(providerClass.getName().equals(BvgProvider.class.getName()))
+                return  (NetworkProvider)providerClass.getDeclaredConstructor(String.class).newInstance(bvgKey);
             return providerClass.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException("error on instantiation of networkprovider '" + name() + "'",ex);
+        } catch (NoSuchMethodException ex) {
+            throw new RuntimeException("error on instantiation of networkprovider '" + name() + "'",ex);
+        } catch (InvocationTargetException ex) {
             throw new RuntimeException("error on instantiation of networkprovider '" + name() + "'",ex);
         }
     }
