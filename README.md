@@ -1,4 +1,4 @@
-#public-transport-web-api [![Build Status](https://travis-ci.org/fewi/public-transport-web-api.svg?branch=master)](https://travis-ci.org/fewi/public-transport-web-api)
+# public-transport-web-api [![Build Status](https://travis-ci.org/fewi/public-transport-web-api.svg?branch=master)](https://travis-ci.org/fewi/public-transport-web-api)
 
 Project description
 ----------------------
@@ -54,7 +54,7 @@ REST Endpoint description
 
 ----------
 
-###GET: /connection
+### GET: /connection
 Lists all trips from one station to another with departure time and line number. 
 
 **Please note that only direct connections will be listed**
@@ -72,7 +72,7 @@ Lists all trips from one station to another with departure time and line number.
 
 ----------
 
-###GET: /departure
+### GET: /departure
 Lists all departure trains of the given station
 
  **Parameter:**
@@ -86,7 +86,7 @@ Lists all departure trains of the given station
 
 ----------
 
-###GET: /connectionEsp
+### GET: /connectionEsp
 Get next departure time for your trip. Lightwight for easy processing with the ESP8266  
 **Please note that only direct connections will be listed**
 
@@ -103,7 +103,7 @@ Get next departure time for your trip. Lightwight for easy processing with the E
 
 ----------
 
-###GET: /departureFHEM
+### GET: /departureFHEM
 Lists all departure trains of the given station in the format for FHEM. http://forum.fhem.de/index.php/topic,48255.0.html
 
  **Parameter:**
@@ -117,7 +117,7 @@ Lists all departure trains of the given station in the format for FHEM. http://f
 
 ----------
 
-###GET: /connectionRaw
+### GET: /connectionRaw
 Lists all trips from one station to another with with all data the public-transport-enabler libary delivers.
 
  **Parameter:**
